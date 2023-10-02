@@ -142,7 +142,7 @@ s32 LZ77UnComp(u8 *src, u8 *dest)
 		for (s32 i = 7; i >= 0; --i) {
 			u8 b = *src++;
 			if (f >> i & 1) { // offset + length
-				s32 len = (b >> 4) + 3;
+				s32 len = (b >> 4) + 2;
 				size -= len;
 				s32 of = (*src++ | (b & 0xF) << 8) + 1;
 				while (len--) {
@@ -152,7 +152,7 @@ s32 LZ77UnComp(u8 *src, u8 *dest)
 			} else { // raw
 				*dest++ = b;
 			}
-			if (--size < 0)
+			if (--size <= 0)
 				return size_org;
 		}
 	}
