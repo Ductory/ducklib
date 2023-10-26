@@ -9,6 +9,9 @@ static UINT EncodersNum;
 
 static CLSID *get_encoder_clsid(WCHAR *mimetype);
 
+/**
+ * initialize gdiplib
+ */
 void gdip_init(void)
 {
 	GdiplusStartupInput gsi = {.GdiplusVersion = 1, .DebugEventCallback = NULL,
@@ -23,12 +26,18 @@ void gdip_init(void)
 	GetImageEncoders(EncodersNum, size, Encoders);
 }
 
+/**
+ * uninitialize gdiplib
+ */
 void gdip_uninit(void)
 {
 	GdiplusShutdown(Token);
 	free(Encoders);
 }
 
+/**
+ * load image from file
+ */
 image_t gdip_loadfile(WCHAR *filename)
 {
 	image_t image;
@@ -36,6 +45,11 @@ image_t gdip_loadfile(WCHAR *filename)
 	return image;
 }
 
+/**
+ * save image to file
+ * @param format image file format
+ * @param jpgquality jpeg quality. avaliable only when format == IF_JPG
+ */
 void gdip_save(image_t image, WCHAR *filename, ImageFormat format,
 	UINT jpgquality, double resolution)
 {
@@ -70,6 +84,9 @@ void gdip_save(image_t image, WCHAR *filename, ImageFormat format,
 	}
 }
 
+/**
+ * create a new image
+ */
 image_t gdip_create(int width, int height)
 {
 	image_t img;
@@ -80,6 +97,9 @@ image_t gdip_create(int width, int height)
 	return img;
 }
 
+/**
+ * create an image copy
+ */
 image_t gdip_clone(image_t img)
 {
 	image_t new;
@@ -87,6 +107,9 @@ image_t gdip_clone(image_t img)
 	return new;
 }
 
+/**
+ * dispose an image
+ */
 void gdip_dispose(image_t image)
 {
 	GdipDisposeImage(image);
@@ -106,6 +129,13 @@ UINT gdip_getheight(image_t image)
 	return height;
 }
 
+/**
+ * lock an image to accelerate
+ * @param x1,y1 left top position
+ * @param x2,y2 right bottom position
+ * @param arr the address of pointer to be set to Scan0
+ * @return image data
+ */
 data_t gdip_lock(image_t image, LONG x1, LONG y1, LONG x2, LONG y2, void *arr)
 {
 	GpRect rc = {x1, y1, x2, y2};
@@ -116,13 +146,20 @@ data_t gdip_lock(image_t image, LONG x1, LONG y1, LONG x2, LONG y2, void *arr)
 	return data;
 }
 
+/**
+ * unlock an image
+ * @param data image data returned by `gdip_lock'
+ */
 void gdip_unlock(image_t image, data_t data)
 {
 	GdipBitmapUnlockBits(image, data);
 	free(data);
 }
 
-BYTE gdip_max(argb_t p)
+/**
+ * max value in RGB
+ */
+int gdip_max(argb_t p)
 {
 	return p.r > p.g ? p.r > p.b ? p.r : p.b
 					 : p.g > p.b ? p.g : p.b;

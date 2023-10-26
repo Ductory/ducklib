@@ -1,3 +1,6 @@
+#ifndef _GDIPLIB_H_
+#define _GDIPLIB_H_
+
 #include <windows.h>
 #include <wtypes.h>
 #include <gdiplus/gdiplus.h>
@@ -25,3 +28,5 @@ UINT gdip_getheight(image_t image);
 data_t gdip_lock(image_t image, LONG x1, LONG y1, LONG x2, LONG y2, void *arr);
 void gdip_unlock(image_t image, data_t data);
 BYTE gdip_max(argb_t p);
+
+#endif
