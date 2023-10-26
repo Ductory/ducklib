@@ -27,6 +27,6 @@ UINT gdip_getwidth(image_t image);
 UINT gdip_getheight(image_t image);
 data_t gdip_lock(image_t image, LONG x1, LONG y1, LONG x2, LONG y2, void *arr);
 void gdip_unlock(image_t image, data_t data);
-BYTE gdip_max(argb_t p);
+int gdip_max(argb_t p);
 
 #endif
