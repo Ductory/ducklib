@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include "compress.h"
 
 typedef uint32_t u32;
 typedef int32_t s32;
@@ -6,10 +6,15 @@ typedef int16_t s16;
 typedef uint16_t u16;
 typedef uint8_t u8;
 
+typedef struct {u32 f; s16 l, r;} node;
+
 #define IS_IN_RANGE(p) (p < src + src_size)
 #define CHECK_IN_RANGE(p) if (!IS_IN_RANGE(p)) break
 
+static void heapify(node *a, s16 *x, s32 l, s32 r);
+static void map_tree(node *a, s16 i, u32 *map, u8 *bmap);
 
+/* Run-Length */
 s32 RLComp(u8 *src, u8 *dest, s32 src_size)
 {
 	u8 *p = src, *dest_org = dest;
@@ -89,7 +94,7 @@ s32 RLUnComp(u8 *src, u8 *dest)
 	return size_org;
 }
 
-
+/* LZ77 */
 s32 LZ77Comp(u8 *src, u8 *dest, s32 src_size, u8 lazy)
 {
 	u8 *p = src, *dest_org = dest;
@@ -158,40 +163,7 @@ s32 LZ77UnComp(u8 *src, u8 *dest)
 	}
 }
 
-typedef struct {u32 f; s16 l, r;} node;
-
-static void heapify(node *a, s16 *x, s32 l, s32 r)
-{
-	s32 p = l, c = p * 2 + 1;
-	while (c <= r) {
-		if (c + 1 <= r && a[x[c]].f > a[x[c + 1]].f)
-			++c;
-		if (a[x[p]].f <= a[x[c]].f)
-			return;
-		s16 t = x[p];
-		x[p] = x[c];
-		x[c] = t;
-		p = c, c = p * 2 + 1;
-	}
-}
-
-static void map_tree(node *a, s16 i, u32 *map, u8 *bmap)
-{
-	static u32 v;
-	static u8 b;
-	if (a[i].l == -1) {
-		s16 t = i;
-		map[t] = v;
-		bmap[t] = b;
-		return;
-	}
-	v <<= 1, ++b;
-	map_tree(a, a[i].l, map, bmap);
-	v |= 1;
-	map_tree(a, a[i].r, map, bmap);
-	v >>= 1, --b;
-}
-
+/* Huffman */
 /* bmode 指示一次性应当写多少bit */
 s32 HuffComp(u8 *src, u8 *dest, s32 src_size, u8 bmode)
 {
@@ -311,4 +283,36 @@ s32 HuffUnComp(u8 *src, u32 *dest)
 		}
 	}
 	return size_org;
+}
+
+static void heapify(node *a, s16 *x, s32 l, s32 r)
+{
+	s32 p = l, c = p * 2 + 1;
+	while (c <= r) {
+		if (c + 1 <= r && a[x[c]].f > a[x[c + 1]].f)
+			++c;
+		if (a[x[p]].f <= a[x[c]].f)
+			return;
+		s16 t = x[p];
+		x[p] = x[c];
+		x[c] = t;
+		p = c, c = p * 2 + 1;
+	}
+}
+
+static void map_tree(node *a, s16 i, u32 *map, u8 *bmap)
+{
+	static u32 v;
+	static u8 b;
+	if (a[i].l == -1) {
+		s16 t = i;
+		map[t] = v;
+		bmap[t] = b;
+		return;
+	}
+	v <<= 1, ++b;
+	map_tree(a, a[i].l, map, bmap);
+	v |= 1;
+	map_tree(a, a[i].r, map, bmap);
+	v >>= 1, --b;
 }
