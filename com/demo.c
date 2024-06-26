@@ -62,7 +62,7 @@ int main(void)
     }
     /* ScriptControl test */
     foo();
-    /* Dictionary text */
+    /* Dictionary test */
     bar();
     CoUninitialize();
 }

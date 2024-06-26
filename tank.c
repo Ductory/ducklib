@@ -1,24 +1,34 @@
+/**
+ * 幻影坦克 - Dangfer
+ * 
+ * note:
+ * 算法细节请见博客 https://ductory.github.io/2023/10/25/%E6%B5%85%E8%B0%88%E4%B8%80%E4%BA%9B%E6%9C%89%E8%B6%A3%E7%9A%84%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E7%AE%97%E6%B3%95/
+ * 博客已更新，但是新推导的算法并未放入库中
+ */
 #include "tank.h"
 
 /**
+ * @tank_gray_sh
  * 灰度幻影坦克
- * @param img_s 表图
- * @param img_h 里图
- * @param fact_s 表图因子
- * @param fact_h 里图因子
- * @return 混合图
+ * 
+ * img_s:  表图
+ * img_h:  里图
+ * fact_s: 表图因子
+ * fact_h: 里图因子
+ * 
+ * return: 混合图
  */
-image_t tank_gray_sh(image_t img_s, image_t img_h, double fact_s, double fact_h)
+image_t *tank_gray_sh(image_t *img_s, image_t *img_h, double fact_s, double fact_h)
 {
 	UINT w = gdip_getwidth(img_h), h = gdip_getheight(img_h);
-	image_t img_m = gdip_create(w, h);
+	image_t *img_m = gdip_create(w, h);
 	argb_t (*arr_s)[w], (*arr_h)[w], (*arr_m)[w];
-	data_t data_s = gdip_lock(img_s, 0, 0, w - 1, h - 1, &arr_s);
-	data_t data_h = gdip_lock(img_h, 0, 0, w - 1, h - 1, &arr_h);
-	data_t data_m = gdip_lock(img_m, 0, 0, w - 1, h - 1, &arr_m);
+	data_t *data_s = gdip_lock(img_s, 0, 0, w - 1, h - 1, &arr_s);
+	data_t *data_h = gdip_lock(img_h, 0, 0, w - 1, h - 1, &arr_h);
+	data_t *data_m = gdip_lock(img_m, 0, 0, w - 1, h - 1, &arr_m);
 	for (UINT i = 0; i < h; ++i)
 		for (UINT j = 0; j < w; ++j) {
-			argb_t ps =arr_s[i][j], ph = arr_h[i][j];
+			argb_t ps = arr_s[i][j], ph = arr_h[i][j];
 			double sr = ps.r * fact_s, sg = ps.g * fact_s, sb = ps.b * fact_s;
 			double hr = ph.r * fact_h, hg = ph.g * fact_h, hb = ph.b * fact_h;
 			double gs = GRAYFY(sr, sg, sb), gh = GRAYFY(hr, hg, hb);
@@ -39,17 +49,20 @@ image_t tank_gray_sh(image_t img_s, image_t img_h, double fact_s, double fact_h)
 }
 
 /**
+ * @tank_gray_h
  * 无表图的灰度幻影坦克
- * @param img_h 里图
- * @return 混合图
+ * 
+ * img_h: 里图
+ * 
+ * return: 混合图
  */
-image_t tank_gray_h(image_t img_h)
+image_t *tank_gray_h(image_t *img_h)
 {
 	UINT w = gdip_getwidth(img_h), h = gdip_getheight(img_h);
-	image_t img_m = gdip_create(w, h);
+	image_t *img_m = gdip_create(w, h);
 	argb_t (*arr_h)[w], (*arr_m)[w];
-	data_t data_h = gdip_lock(img_h, 0, 0, w - 1, h - 1, &arr_h);
-	data_t data_m = gdip_lock(img_m, 0, 0, w - 1, h - 1, &arr_m);
+	data_t *data_h = gdip_lock(img_h, 0, 0, w - 1, h - 1, &arr_h);
+	data_t *data_m = gdip_lock(img_m, 0, 0, w - 1, h - 1, &arr_m);
 	for (UINT i = 0; i < h; ++i)
 		for (UINT j = 0; j < w; ++j) {
 			argb_t p = arr_h[i][j];
@@ -62,20 +75,23 @@ image_t tank_gray_h(image_t img_h)
 }
 
 /**
+ * @tank_rgb_sh
  * 全彩幻影坦克
- * @param img_s 表图
- * @param img_h 里图
- * @param algo 0:RGB算法 1:Lab算法(recommend)
- * @return 混合图
+ * 
+ * img_s: 表图
+ * img_h: 里图
+ * algo:  0:RGB算法 1:Lab算法(recommend)
+ * 
+ * return: 混合图
  */
-image_t tank_rgb_sh(image_t img_s, image_t img_h, int algo)
+image_t *tank_rgb_sh(image_t *img_s, image_t *img_h, int algo)
 {
 	UINT w = gdip_getwidth(img_h), h = gdip_getheight(img_h);
-	image_t img_m = gdip_create(w, h);
+	image_t *img_m = gdip_create(w, h);
 	argb_t (*arr_s)[w], (*arr_h)[w], (*arr_m)[w];
-	data_t data_s = gdip_lock(img_s, 0, 0, w - 1, h - 1, &arr_s);
-	data_t data_h = gdip_lock(img_h, 0, 0, w - 1, h - 1, &arr_h);
-	data_t data_m = gdip_lock(img_m, 0, 0, w - 1, h - 1, &arr_m);
+	data_t *data_s = gdip_lock(img_s, 0, 0, w - 1, h - 1, &arr_s);
+	data_t *data_h = gdip_lock(img_h, 0, 0, w - 1, h - 1, &arr_h);
+	data_t *data_m = gdip_lock(img_m, 0, 0, w - 1, h - 1, &arr_m);
 	for (UINT i = 0; i < h; ++i)
 		for (UINT j = 0; j < w; ++j) {
 			argb_t ps =arr_s[i][j], ph = arr_h[i][j];
@@ -112,21 +128,24 @@ image_t tank_rgb_sh(image_t img_s, image_t img_h, int algo)
 }
 
 /**
+ * @tank_rgb_h
  * 无表图的全彩幻影坦克
- * @param img_h 里图
- * @return 混合图
+ * 
+ * img_h: 里图
+ * 
+ * return: 混合图
  */
-image_t tank_rgb_h(image_t img_h)
+image_t *tank_rgb_h(image_t *img_h)
 {
 	UINT w = gdip_getwidth(img_h), h = gdip_getheight(img_h);
-	image_t img_m = gdip_create(w, h);
+	image_t *img_m = gdip_create(w, h);
 	argb_t (*arr_h)[w], (*arr_m)[w];
-	data_t data_h = gdip_lock(img_h, 0, 0, w - 1, h - 1, &arr_h);
-	data_t data_m = gdip_lock(img_m, 0, 0, w - 1, h - 1, &arr_m);
+	data_t *data_h = gdip_lock(img_h, 0, 0, w - 1, h - 1, &arr_h);
+	data_t *data_m = gdip_lock(img_m, 0, 0, w - 1, h - 1, &arr_m);
 	for (UINT i = 0; i < h; ++i)
 		for (UINT j = 0; j < w; ++j) {
 			argb_t p = arr_h[i][j];
-			int a = gdip_max(p);
+			int a = gdip_getmax(p);
 			int r = 0, g = 0, b = 0;
 			if (a)
 				r = p.r * 255 / a, g = p.g * 255 / a, b = p.b * 255 / a;

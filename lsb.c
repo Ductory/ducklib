@@ -10,12 +10,12 @@
  * @param size size of hidden data
  * @return generated image
  */
-image_t lsb(image_t img, BYTE *bytes, size_t size)
+image_t *lsb(image_t *img, BYTE *bytes, size_t size)
 {
-	image_t new = gdip_clone(img);
+	image_t *new = gdip_clone(img);
 	UINT w = gdip_getwidth(new), h = gdip_getheight(new);
 	argb_t *arr;
-	data_t data = gdip_lock(new, 0, 0, w - 1, h - 1, &arr);
+	data_t *data = gdip_lock(new, 0, 0, w - 1, h - 1, &arr);
 	for (int i = 0; i < 8; ++i) {
 		argb_t p = arr[i];
 		arr[i] = ARGB(SET_LSB(p.a, size, i, 0), SET_LSB(p.r, size, i, 1),
@@ -37,11 +37,11 @@ image_t lsb(image_t img, BYTE *bytes, size_t size)
  * @param size pointer to store hidden size
  * @return hidden data
  */
-BYTE *ilsb(image_t img, size_t *size)
+BYTE *ilsb(image_t *img, size_t *size)
 {
 	UINT w = gdip_getwidth(img), h = gdip_getheight(img);
 	argb_t *arr;
-	data_t data = gdip_lock(img, 0, 0, w - 1, h - 1, &arr);
+	data_t *data = gdip_lock(img, 0, 0, w - 1, h - 1, &arr);
 	size_t sz = 0;
 	for (int i = 0; i < 8; ++i) {
 		argb_t p = arr[i];

@@ -8,8 +8,8 @@ int main(void)
 	image_t img_m;
 	// img_m = tank_gray_sh(img_s, img_h, 1.2, 0.7);
 	// img_m = tank_gray_h(img_h);
-	// img_m = tan_rgb_sh(img_s, img_h, 1);
-	// img_m = tan_rgb_h(img_h);
+	// img_m = tank_rgb_sh(img_s, img_h, 1);
+	// img_m = tank_rgb_h(img_h);
 	gdip_save(img_m, L"gen.png", IF_PNG, 0, 0);
 	gdip_dispose(img_s);
 	gdip_dispose(img_h);
