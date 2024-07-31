@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "compress.h"
 
 typedef uint32_t u32;
@@ -150,7 +151,7 @@ s32 LZ77UnComp(u8 *src, u8 *dest)
 				s32 len = (b >> 4) + 2;
 				size -= len;
 				s32 of = (*src++ | (b & 0xF) << 8) + 1;
-				while (len--) {
+				while (len-- >= 0) {
 					*dest = dest[-of];
 					++dest;
 				}
@@ -268,7 +269,7 @@ s32 HuffUnComp(u8 *src, u32 *dest)
 		for (s32 i = 0x20; --i >= 0; v <<= 1) {
 			u8 f = v >> 0x1F;
 			u8 b = *q << f;
-			q = (u8*)((u32)q & ~1) + (((*q & 0x3F) + 1) << 1) + f; // query tree
+			q = (u8*)((uintptr_t)q & ~1) + (((*q & 0x3F) + 1) << 1) + f; // query tree
 			if (b & 0x80) { // is leaf
 				t = t >> bits | *q << (0x20 - bits);
 				q = root;
