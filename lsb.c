@@ -15,7 +15,8 @@ image_t *lsb(image_t *img, BYTE *bytes, size_t size)
 	image_t *new = gdip_clone(img);
 	UINT w = gdip_getwidth(new), h = gdip_getheight(new);
 	argb_t *arr;
-	data_t *data = gdip_lock(new, 0, 0, w - 1, h - 1, &arr);
+	data_t data;
+	gdip_lock(new, 0, 0, w, h, &data, &arr);
 	for (int i = 0; i < 8; ++i) {
 		argb_t p = arr[i];
 		arr[i] = ARGB(SET_LSB(p.a, size, i, 0), SET_LSB(p.r, size, i, 1),
@@ -28,7 +29,7 @@ image_t *lsb(image_t *img, BYTE *bytes, size_t size)
 		arr[i + 8] = ARGB(SET_LSB(p.a, b, l, 0), SET_LSB(p.r, b, l, 1),
 						  SET_LSB(p.g, b, l, 2), SET_LSB(p.b, b, l, 3));
 	}
-	gdip_unlock(new, data);
+	gdip_unlock(new, &data);
 	return new;
 }
 
@@ -41,7 +42,8 @@ BYTE *ilsb(image_t *img, size_t *size)
 {
 	UINT w = gdip_getwidth(img), h = gdip_getheight(img);
 	argb_t *arr;
-	data_t *data = gdip_lock(img, 0, 0, w - 1, h - 1, &arr);
+	data_t data;
+	gdip_lock(img, 0, 0, w, h, &data, &arr);
 	size_t sz = 0;
 	for (int i = 0; i < 8; ++i) {
 		argb_t p = arr[i];
@@ -59,5 +61,6 @@ BYTE *ilsb(image_t *img, size_t *size)
 	}
 	if (size)
 		*size = sz;
+	gdip_unlock(img, &data);
 	return buf;
 }
